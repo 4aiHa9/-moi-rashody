@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#171916">
-<title>Мои расходы</title>
+<title>Мои расходы — версия 2</title>
 <style>
 :root{--bg:#111310;--panel:#1b1e19;--panel2:#22261f;--line:#34392f;--text:#f2f3ec;--muted:#a8afa0;--tea:#d5a45f;--life:#91b5a0;--red:#e58d80;--radius:20px}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
@@ -103,7 +103,7 @@ const defaults={
 const $=id=>document.getElementById(id);
 const today=new Date();
 let state=loadState(), selectedMonth=monthKey(today), categoryScope='tea', modalReturn='homeView', editingId=null;
-function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.expenses)&&s.categories?.tea&&s.categories?.life)return s;}catch(e){}return {expenses:[],categories:JSON.parse(JSON.stringify(defaults)),quick:[]};}
+function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.expenses)&&s.categories?.tea&&s.categories?.life){/* Merge the requested default categories into existing local data so an earlier/empty saved list cannot hide them. Preserve custom categories and recorded expenses. */for(const scope of ['tea','life']){const existing=s.categories[scope];for(const base of defaults[scope]){let found=existing.find(c=>String(c.name).trim().toLowerCase()===base.name.toLowerCase());if(!found)existing.push(JSON.parse(JSON.stringify(base)));else{found.subs=Array.isArray(found.subs)?found.subs:[];for(const sub of base.subs){if(!found.subs.some(x=>String(x).trim().toLowerCase()===sub.toLowerCase()))found.subs.push(sub);}}}}if(!Array.isArray(s.quick))s.quick=[];return s;}}catch(e){}return {expenses:[],categories:JSON.parse(JSON.stringify(defaults)),quick:[]};}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){alert('Не удалось сохранить данные. Возможно, в браузере закончилось место. Экспортируй резервную копию.');}}
 function monthKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;}
 function monthDate(key){const [y,m]=key.split('-').map(Number);return new Date(y,m-1,1,12);}
@@ -155,7 +155,7 @@ function exportData(){const blob=new Blob([JSON.stringify({app:'Мои расх�
 function importData(file){const reader=new FileReader();reader.onload=()=>{try{const x=JSON.parse(reader.result);if(!Array.isArray(x.expenses)||!x.categories?.tea||!x.categories?.life)throw Error('bad');if(!confirm(`Заменить текущие данные? В файле ${x.expenses.length} расходов.`))return;state={expenses:x.expenses,categories:x.categories,quick:Array.isArray(x.quick)?x.quick:[]};save();render();alert('Данные восстановлены.');}catch(e){alert('Не удалось прочитать файл. Выбери резервную копию, экспортированную из этого приложения.');}};reader.readAsText(file);}
 $('prevMonth').onclick=()=>{selectedMonth=shiftMonth(selectedMonth,-1);render();};$('nextMonth').onclick=()=>{selectedMonth=shiftMonth(selectedMonth,1);render();};
 $('teaTile').onclick=()=>{categoryScope='tea';showView('categoriesView');};$('lifeTile').onclick=()=>{categoryScope='life';showView('categoriesView');};
-$('addExpenseBtn').onclick=()=>openExpense();$('historyAddBtn').onclick=()=>openExpense();$('allHistoryBtn').onclick=()=>showView('historyView');$('compareShortcut').onclick=()=>{ $('reportMonth').value=selectedMonth;$('compareMonth').value=shiftMonth(selectedMonth,-1);showView('reportsView');renderReport();};
+$('addExpenseBtn').addEventListener('click',()=>{try{openExpense();}catch(err){console.error(err);alert('Не удалось открыть форму расхода. Обнови страницу и попробуй ещё раз.');}});$('historyAddBtn').addEventListener('click',()=>{try{openExpense();}catch(err){console.error(err);alert('Не удалось открыть форму расхода. Обнови страницу и попробуй ещё раз.');}});$('allHistoryBtn').onclick=()=>showView('historyView');$('compareShortcut').onclick=()=>{ $('reportMonth').value=selectedMonth;$('compareMonth').value=shiftMonth(selectedMonth,-1);showView('reportsView');renderReport();};
 $('scopeTea').onclick=()=>{categoryScope='tea';renderCategories();};$('scopeLife').onclick=()=>{categoryScope='life';renderCategories();};$('addCategoryBtn').onclick=addCategory;
 $('historySearch').oninput=renderHistory;$('historyScope').onchange=renderHistory;$('reportMonth').onchange=renderReport;$('compareMonth').onchange=renderReport;$('reportScope').onchange=renderReport;
 document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>showView(b.dataset.view));
