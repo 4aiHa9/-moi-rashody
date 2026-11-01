@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#171916">
+<title>Мои расходы — версия 4</title>
+<style>
+:root{--bg:#111310;--panel:#1b1e19;--panel2:#22261f;--line:#34392f;--text:#f2f3ec;--muted:#a8afa0;--tea:#d5a45f;--life:#91b5a0;--red:#e58d80;--radius:20px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}
+.app{max-width:760px;margin:auto;padding:calc(16px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom))}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.brand{font-size:22px;font-weight:800;letter-spacing:-.5px}.brand small{display:block;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.2px;margin-top:2px}.iconbtn{width:42px;height:42px;border-radius:14px;background:var(--panel2);color:var(--text);font-size:20px}
+.monthbar{display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);padding:10px 12px;border-radius:15px;margin-bottom:14px}.monthbar button{background:transparent;color:var(--text);font-size:23px;padding:2px 10px}.monthname{font-weight:750;text-transform:capitalize}.monthname small{display:block;color:var(--muted);font-size:11px;font-weight:500;text-align:center;text-transform:none}
+.halves{display:grid;grid-template-columns:1fr 1fr;gap:10px}.half{min-height:158px;border-radius:var(--radius);padding:17px 14px;text-align:left;color:var(--text);border:1px solid var(--line);background:linear-gradient(150deg,#29261f,#1b1e19);position:relative;overflow:hidden}.half.life{background:linear-gradient(150deg,#202b25,#1b1e19)}.half:active{transform:scale(.99)}.half .label{font-weight:800;font-size:16px}.half .emoji{font-size:20px;margin-right:5px}.amount{font-size:clamp(20px,5vw,28px);font-weight:850;letter-spacing:-.8px;margin-top:24px;white-space:nowrap}.count{font-size:12px;color:var(--muted);margin-top:3px}.half.tea .amount{color:var(--tea)}.half.life .amount{color:var(--life)}
+.totalbox{text-align:center;padding:21px 10px 17px;margin:12px 0 16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}.totalbox .caption{font-size:11px;letter-spacing:1.6px;color:var(--muted);font-weight:750}.total{font-size:34px;font-weight:900;letter-spacing:-1px;margin-top:5px}.totalbox .sub{font-size:12px;color:var(--muted);margin-top:4px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.primary{background:var(--tea);color:#21180d;font-weight:800;border-radius:15px;padding:15px 12px}.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:15px;padding:14px 10px;font-weight:700}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;margin:25px 2px 10px}.sectionhead h2{font-size:17px;margin:0}.muted{color:var(--muted)}.smallbtn{border-radius:11px;padding:8px 11px;background:var(--panel2);color:var(--text);border:1px solid var(--line);font-size:13px}
+.recent{background:var(--panel);border:1px solid var(--line);border-radius:17px;overflow:hidden}.row{display:flex;align-items:center;gap:11px;padding:13px;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.rowicon{width:39px;height:39px;border-radius:13px;background:var(--panel2);display:grid;place-items:center;font-size:18px;flex-shrink:0}.rowmain{min-width:0;flex:1}.rowtitle{font-weight:700;overflow-wrap:anywhere}.rowsub{font-size:12px;color:var(--muted);margin-top:2px}.rowamount{font-weight:800;white-space:nowrap}.empty{padding:24px 14px;text-align:center;color:var(--muted);font-size:14px}
+.bottomnav{position:sticky;bottom:8px;margin:20px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:#20231eeb;border:1px solid var(--line);border-radius:18px;padding:6px;backdrop-filter:blur(14px)}.navbtn{background:transparent;color:var(--muted);padding:10px 4px;border-radius:13px;font-size:12px;font-weight:700}.navbtn span{display:block;font-size:19px;margin-bottom:3px}.navbtn.active{background:#363a30;color:var(--text)}
+.view{display:none}.view.active{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:12px}.card h3{font-size:15px;margin:0 0 12px}.formrow{display:grid;gap:7px;margin-bottom:13px}.formrow label{font-size:12px;color:var(--muted);font-weight:700}.field{width:100%;background:#111310;border:1px solid var(--line);border-radius:12px;color:var(--text);padding:12px;outline:none}.field:focus{border-color:var(--tea)}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:10px 12px;font-size:13px}.chip.selected{border-color:var(--tea);background:#373025;color:#f6d5a3}.btnrow{display:flex;gap:8px;flex-wrap:wrap}.wide{width:100%}
+.categorygrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.categorycard{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px;text-align:left;color:var(--text);min-height:88px}.categorycard strong{display:block;font-size:14px}.categorycard small{display:block;color:var(--muted);margin-top:7px;font-size:12px}.categorycard .catamount{color:var(--tea);font-weight:800;font-size:15px}
+.progress{height:7px;background:#34392f;border-radius:10px;overflow:hidden;margin-top:8px}.progress div{height:100%;background:var(--tea);border-radius:10px}
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filterbar .field{flex:1;min-width:130px}
+.comparegrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.comparecard{background:var(--panel2);border-radius:15px;padding:13px}.comparecard small{display:block;color:var(--muted);font-size:12px}.comparecard strong{display:block;font-size:21px;margin:6px 0}.delta{font-size:12px;font-weight:750}.up{color:var(--red)}.down{color:var(--life)}
+.barline{display:grid;grid-template-columns:minmax(80px,1fr) 2fr auto;align-items:center;gap:8px;margin:13px 0;font-size:12px}.bartrack{height:8px;background:#34392f;border-radius:9px;overflow:hidden}.barfill{height:100%;background:var(--tea);border-radius:9px}.barval{font-weight:750;white-space:nowrap}
+.modalback{position:fixed;inset:0;background:#000a;z-index:10;display:none;align-items:flex-end;justify-content:center;padding:10px}.modalback.show{display:flex}.modal{width:min(100%,620px);max-height:92dvh;overflow:auto;background:#1b1e19;border:1px solid var(--line);border-radius:24px;padding:19px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 20px 80px #0008}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.modalhead h2{font-size:19px;margin:0}.close{background:var(--panel2);color:var(--text);border-radius:11px;width:36px;height:36px;font-size:20px}
+.notice{background:#2b3027;color:#d8e5d1;border-radius:12px;padding:11px;font-size:12px;margin-bottom:12px}
+@media(min-width:600px){.app{padding-top:28px}.half{min-height:175px;padding:20px}.amount{font-size:30px}.modalback{align-items:center}.categorygrid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top"><div class="brand">Мои расходы<small>Личный учёт · без аккаунта</small></div><button class="iconbtn" id="settingsBtn" aria-label="Настройки">⚙</button></header>
+  <div class="monthbar"><button id="prevMonth" aria-label="Предыдущий месяц">‹</button><div class="monthname" id="monthLabel">Ноябрь 2026<small>Выбранный месяц</small></div><button id="nextMonth" aria-label="Следующий месяц">›</button></div>
+
+  <main>
+    <section class="view active" id="homeView">
+      <div class="halves">
+        <button class="half tea" id="teaTile"><div class="label"><span class="emoji">🐒</span>На чайную</div><div class="amount" id="teaTotal">0 ₽</div><div class="count" id="teaCount">0 операций</div></button>
+        <button class="half life" id="lifeTile"><div class="label"><span class="emoji">🏠</span>На жизнь</div><div class="amount" id="lifeTotal">0 ₽</div><div class="count" id="lifeCount">0 операций</div></button>
+      </div>
+      <div class="totalbox"><div class="caption">ОБЩИЕ РАСХОДЫ</div><div class="total" id="grandTotal">0 ₽</div><div class="sub" id="totalSub">За выбранный месяц</div></div>
+      <div class="actions"><button class="primary" id="addExpenseBtn">＋ Добавить расход</button><button class="secondary" id="compareShortcut">↗ Сравнить месяцы</button></div>
+      <div class="sectionhead"><h2>Последние расходы</h2><button class="smallbtn" id="allHistoryBtn">Вся история →</button></div>
+      <div class="recent" id="recentList"></div>
+    </section>
+
+    <section class="view" id="categoriesView">
+      <div class="sectionhead" style="margin-top:4px"><div style="display:flex;align-items:center;gap:9px"><button class="smallbtn" id="categoryBack" style="display:none">← Назад</button><h2 id="categoriesTitle">На чайную</h2></div><button class="smallbtn" id="addCategoryBtn">＋ Категория</button></div>
+      <div class="filterbar" id="scopePicker"><button class="chip selected" id="scopeTea">🐒 На чайную</button><button class="chip" id="scopeLife">🏠 На жизнь</button></div>
+      <div class="muted" id="categoryHint" style="font-size:13px;margin:0 2px 12px">Выбери категорию</div>
+      <div class="categorygrid" id="categoryGrid"></div>
+    </section>
+
+    <section class="view" id="historyView">
+      <div class="sectionhead" style="margin-top:4px"><h2>История расходов</h2><button class="smallbtn" id="historyAddBtn">＋ Добавить</button></div>
+      <div class="filterbar"><input class="field" id="historySearch" placeholder="Поиск по покупкам…" aria-label="Поиск"><select class="field" id="historyScope"><option value="all">Все разделы</option><option value="tea">На чайную</option><option value="life">На жизнь</option></select></div>
+      <div class="recent" id="historyList"></div>
+    </section>
+
+    <section class="view" id="reportsView">
+      <div class="sectionhead" style="margin-top:4px"><h2>Сравнение месяцев</h2></div>
+      <div class="card"><div class="formgrid"><div class="formrow"><label for="reportMonth">Текущий месяц</label><input class="field" type="month" id="reportMonth"></div><div class="formrow"><label for="compareMonth">Сравнить с</label><input class="field" type="month" id="compareMonth"></div></div><div class="formrow"><label for="reportScope">Что сравниваем</label><select class="field" id="reportScope"><option value="all">Все расходы</option><option value="tea">На чайную</option><option value="life">На жизнь</option></select></div></div>
+      <div id="reportContent"></div>
+    </section>
+
+    <section class="view" id="settingsView">
+      <div class="sectionhead" style="margin-top:4px"><h2>Данные и настройки</h2></div>
+      <div class="card"><h3>Резервная копия</h3><p class="muted" style="font-size:13px">Расходы хранятся только в этом браузере на этом устройстве. Экспортируй копию время от времени, чтобы не потерять записи.</p><div class="btnrow"><button class="primary" id="exportBtn">Экспортировать JSON</button><button class="secondary" id="importBtn">Восстановить из файла</button><input type="file" id="importFile" accept=".json,application/json" hidden></div></div>
+      <div class="card"><h3>Управление категориями</h3><p class="muted" style="font-size:13px">Добавляй, переименовывай и удаляй категории или подпункты. Удаление категории не удаляет уже записанные расходы.</p><button class="secondary wide" id="manageCatsBtn">Открыть категории</button></div>
+      <div class="card"><h3>Хранение</h3><div class="notice">Данные не отправляются в интернет. Если очистить данные сайта или браузера, записи могут пропасть — поэтому сохраняй резервную копию.</div><button class="secondary wide" id="clearDataBtn" style="color:var(--red)">Удалить все данные приложения</button></div>
+      <div class="muted" style="font-size:11px;text-align:center;padding:10px">Мои расходы · локальная версия 1.0</div>
+    </section>
+  </main>
+  <nav class="bottomnav" aria-label="Основная навигация"><button class="navbtn active" data-view="homeView"><span>⌂</span>Главная</button><button class="navbtn" data-view="categoriesView"><span>▦</span>Категории</button><button class="navbtn" data-view="historyView"><span>≡</span>История</button></nav>
+</div>
+
+<div class="modalback" id="modalBack"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modalhead"><h2 id="modalTitle">Добавить расход</h2><button class="close" id="closeModal" aria-label="Закрыть">×</button></div><div id="modalBody"></div></div></div>
+<script>
+(()=>{
+'use strict';
+const KEY='my-expenses-local-v1';
+const defaults={
+ tea:[
+  {name:'Коктейли',subs:['Вода','Сиропы']},
+  {name:'Кофе',subs:['Сиропы','Кофе','Молоко']},
+  {name:'Чай',subs:['Лена','Паша','Расходники','Посуда']},
+  {name:'Аренда',subs:['Коммуналка','Свет','Остальное']},
+  {name:'Расходники в чайную',subs:['Интернет']},
+  {name:'Зарплата',subs:['Владимир']}
+ ],
+ life:[
+  {name:'Машина',subs:['Ремонт','Бензин','Мойка','Детали']},
+  {name:'Продукты',subs:['Быстроном','Пятёрочка','КБ']},
+  {name:'Фастфуд',subs:['КФС','Хот-дог']},
+  {name:'Даша',subs:[]},
+  {name:'Благотворительность',subs:['7-я','Тимофей','Церковь']},
+  {name:'Развлечения',subs:['Игра','Баня']},
+  {name:'На себя',subs:['Сотовая связь','Одежда','Зал']}
+ ]
+};
+function esc(value){return String(value??'').replace(/[&<>\"']/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[ch]));}
+const $=id=>document.getElementById(id);
+const today=new Date();
+let state=loadState(), selectedMonth=monthKey(today), categoryScope='tea', currentCategory=null, modalReturn='homeView', editingId=null;
+function loadState(){
+  const fresh=()=>({expenses:[],categories:JSON.parse(JSON.stringify(defaults)),quick:[]});
+  try{
+    const raw=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(!raw||!Array.isArray(raw.expenses))return fresh();
+    const s={expenses:raw.expenses,categories:{tea:Array.isArray(raw.categories?.tea)?raw.categories.tea:[],life:Array.isArray(raw.categories?.life)?raw.categories.life:[]},quick:Array.isArray(raw.quick)?raw.quick:[]};
+    for(const scope of ['tea','life']){
+      for(const base of defaults[scope]){
+        let found=s.categories[scope].find(c=>c&&String(c.name||'').trim().toLowerCase()===base.name.toLowerCase());
+        if(!found){s.categories[scope].push(JSON.parse(JSON.stringify(base)));continue;}
+        if(!Array.isArray(found.subs))found.subs=[];
+        for(const sub of base.subs)if(!found.subs.some(x=>String(x).trim().toLowerCase()===sub.toLowerCase()))found.subs.push(sub);
+      }
+      s.categories[scope]=s.categories[scope].filter(c=>c&&typeof c.name==='string').map(c=>({name:c.name,subs:Array.isArray(c.subs)?c.subs.filter(x=>typeof x==='string'):[]}));
+    }
+    s.expenses=s.expenses.filter(e=>e&&typeof e==='object'&&Number.isFinite(Number(e.amount))&&e.date);
+    s.quick=s.quick.filter(q=>q&&typeof q==='object');
+    localStorage.setItem(KEY,JSON.stringify(s));return s;
+  }catch(e){return fresh();}
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){alert('Не удалось сохранить данные. Возможно, в браузере закончилось место. Экспортируй резервную копию.');}}
+function monthKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;}
+function monthDate(key){const [y,m]=key.split('-').map(Number);return new Date(y,m-1,1,12);}
+function shiftMonth(key,delta){const d=monthDate(key);d.setMonth(d.getMonth()+delta);return monthKey(d);}
+function fmt(n){return new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(n||0)+' ₽';}
+function fmtDate(s){const d=new Date(s+'T12:00:00');return d.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});}
+function monthName(key){return monthDate(key).toLocaleDateString('ru-RU',{month:'long',year:'numeric'});}
+function inMonth(e,key){return e.date?.slice(0,7)===key;}
+function expensesFor(key,scope='all'){return state.expenses.filter(e=>inMonth(e,key)&&(scope==='all'||e.scope===scope));}
+function sum(arr){return arr.reduce((a,e)=>a+Number(e.amount||0),0);}
+function scopeName(s){return s==='tea'?'На чайную':'На жизнь';}
+function allCategories(){return ['tea','life'].flatMap(scope=>state.categories[scope].map(c=>({scope,...c})));}
+function getCat(scope,name){return state.categories[scope].find(c=>c.name===name);}
+function iconFor(name){const n=name.toLowerCase();if(/кофе|кфс|хот-дог|фаст/.test(n))return '☕';if(/чай|л[её]на|паша/.test(n))return '🍵';if(/машин|бензин|мойка|детал|ремонт/.test(n))return '🚗';if(/продукт|быстроном|пят[её]роч|кб/.test(n))return '🛒';if(/аренд|коммун|свет|интернет/.test(n))return '🏠';if(/зарплат|владимир/.test(n))return '💼';if(/благотвор|церк|тимофей|7-я/.test(n))return '❤️';if(/развлеч|игра|баня/.test(n))return '🎮';if(/одеж|зал|связ|на себя/.test(n))return '👤';if(/сироп|вода|молоко|расходник|посуда/.test(n))return '📦';if(/даша/.test(n))return '💛';return '•';}
+function render(){renderHome();renderCategories();renderHistory();renderReport();$('monthLabel').innerHTML=`${monthName(selectedMonth)}<small>Выбранный месяц</small>`;$('reportMonth').value ||= selectedMonth;$('compareMonth').value ||= shiftMonth(selectedMonth,-1);}
+function renderHome(){const arr=expensesFor(selectedMonth),tea=arr.filter(e=>e.scope==='tea'),life=arr.filter(e=>e.scope==='life');$('teaTotal').textContent=fmt(sum(tea));$('lifeTotal').textContent=fmt(sum(life));$('teaCount').textContent=`${tea.length} ${plural(tea.length,'операция','операции','операций')}`;$('lifeCount').textContent=`${life.length} ${plural(life.length,'операция','операции','операций')}`;$('grandTotal').textContent=fmt(sum(arr));$('totalSub').textContent=`${monthName(selectedMonth)} · ${arr.length} ${plural(arr.length,'запись','записи','записей')}`;const recent=[...state.expenses].sort((a,b)=>(b.date+b.id).localeCompare(a.date+a.id)).slice(0,5);$('recentList').innerHTML=recent.length?recent.map(rowHTML).join(''):'<div class="empty">Пока нет расходов.<br>Нажми «Добавить расход», чтобы начать.</div>';bindRowButtons($('recentList'));}
+function plural(n,a,b,c){n=Math.abs(n)%100;let n1=n%10;return n>10&&n<20?c:n1>1&&n1<5?b:n1===1?a:c;}
+function rowHTML(e){return `<div class="row"><div class="rowicon">${iconFor(e.category)}</div><div class="rowmain"><div class="rowtitle">${esc(e.sub||e.category)}${e.note?` · ${esc(e.note)}`:''}</div><div class="rowsub">${esc(scopeName(e.scope))} · ${esc(e.category)} · ${fmtDate(e.date)}</div></div><div class="rowamount">−${fmt(e.amount)}</div><button class="smallbtn editrow" data-id="${e.id}" aria-label="Изменить">✎</button></div>`;}
+function bindRowButtons(root){root.querySelectorAll('.editrow').forEach(b=>b.addEventListener('click',()=>openExpense(b.dataset.id)));}
+function renderCategories(){
+ if(!Array.isArray(state.categories?.[categoryScope]))state.categories[categoryScope]=JSON.parse(JSON.stringify(defaults[categoryScope]));
+ const cats=state.categories[categoryScope];
+ $('categoriesTitle').textContent=currentCategory?currentCategory:scopeName(categoryScope);
+ $('scopeTea').classList.toggle('selected',categoryScope==='tea');$('scopeLife').classList.toggle('selected',categoryScope==='life');
+ $('scopePicker').style.display=currentCategory?'none':'flex';$('categoryBack').style.display=currentCategory?'inline-block':'none';
+ $('categoryBack').onclick=()=>{currentCategory=null;renderCategories();};
+ $('categoryHint').textContent=currentCategory?'Выбери подпункт, чтобы внести сумму':'Выбери категорию';
+ $('addCategoryBtn').textContent=currentCategory?'＋ Подпункт':'＋ Категория';
+ const arr=expensesFor(selectedMonth,categoryScope);
+ if(!currentCategory){
+  $('categoryGrid').innerHTML=cats.map(c=>{const total=sum(arr.filter(e=>e.category===c.name));return `<button class="categorycard" data-cat="${esc(c.name)}"><strong>${iconFor(c.name)} ${esc(c.name)}</strong><small>${c.subs.length} ${plural(c.subs.length,'подпункт','подпункта','подпунктов')} · <span class="catamount">${fmt(total)}</span></small></button>`}).join('')||'<div class="empty">Категорий пока нет.</div>';
+  $('categoryGrid').querySelectorAll('.categorycard').forEach(b=>b.addEventListener('click',()=>{const c=getCat(categoryScope,b.dataset.cat);if(!c)return;if(!c.subs.length){openExpense(null,categoryScope,c.name,'');return;}currentCategory=c.name;renderCategories();}));
+ } else {
+  const c=getCat(categoryScope,currentCategory);if(!c){currentCategory=null;renderCategories();return;}
+  const subs=c.subs||[];
+  $('categoryGrid').innerHTML=subs.map(sub=>{const total=sum(arr.filter(e=>e.category===c.name&&e.sub===sub));return `<button class="categorycard" data-sub="${esc(sub)}"><strong>${iconFor(sub)} ${esc(sub)}</strong><small>Потрачено: <span class="catamount">${fmt(total)}</span></small></button>`}).join('')+'<button class="categorycard" id="addSubTile"><strong>＋ Добавить подпункт</strong><small>Создать свой вариант</small></button>';
+  $('categoryGrid').querySelectorAll('[data-sub]').forEach(b=>b.addEventListener('click',()=>openExpense(null,categoryScope,c.name,b.dataset.sub)));
+  $('addSubTile').onclick=addCategory;
+ }
+}
+function renderHistory(){const q=$('historySearch').value.trim().toLowerCase(),sc=$('historyScope').value;const arr=[...state.expenses].filter(e=>(sc==='all'||e.scope===sc)&&(!q||[e.category,e.sub,e.note,scopeName(e.scope)].join(' ').toLowerCase().includes(q))).sort((a,b)=>(b.date+b.id).localeCompare(a.date+a.id));$('historyList').innerHTML=arr.length?arr.map(rowHTML).join(''):'<div class="empty">Расходы не найдены.</div>';bindRowButtons($('historyList'));}
+function renderReport(){const m=$('reportMonth').value||selectedMonth,c=$('compareMonth').value||shiftMonth(m,-1),sc=$('reportScope').value;const a=expensesFor(m,sc),b=expensesFor(c,sc),sa=sum(a),sb=sum(b),diff=sa-sb,pct=sb?diff/sb*100:null;const deltaText=sb===0?(sa===0?'Без изменений':'Нет расходов в прошлом периоде'):`${diff>0?'+':''}${fmt(diff)} (${pct>0?'+':''}${pct===null?'—':pct.toLocaleString('ru-RU',{maximumFractionDigits:1})}%)`;const cats=allCategories().filter(x=>sc==='all'||x.scope===sc);const rows=cats.map(cat=>{const av=sum(a.filter(e=>e.scope===cat.scope&&e.category===cat.name)),bv=sum(b.filter(e=>e.scope===cat.scope&&e.category===cat.name));return {...cat,av,bv,d:av-bv};}).filter(x=>x.av||x.bv).sort((x,y)=>y.av-x.av);const max=Math.max(1,...rows.map(x=>Math.max(x.av,x.bv)));$('reportContent').innerHTML=`<div class="card"><h3>${esc(monthName(m))} vs ${esc(monthName(c))}</h3><div class="comparegrid"><div class="comparecard"><small>${esc(monthName(m))}</small><strong>${fmt(sa)}</strong><small>${a.length} операций</small></div><div class="comparecard"><small>${esc(monthName(c))}</small><strong>${fmt(sb)}</strong><small>${b.length} операций</small></div></div><div style="margin-top:15px"><div class="delta ${diff>0?'up':diff<0?'down':''}">${esc(deltaText)}</div><div class="muted" style="font-size:12px;margin-top:5px">${diff>0?'Потрачено больше':diff<0?'Потрачено меньше':'Расходы не изменились'} в выбранном периоде.</div></div></div><div class="card"><h3>По категориям</h3>${rows.length?rows.map(x=>`<div style="margin:14px 0"><div style="display:flex;justify-content:space-between;gap:8px;font-size:13px"><span>${iconFor(x.name)} ${esc(x.name)} <span class="muted">${sc==='all'?`· ${scopeName(x.scope)}`:''}</span></span><b>${fmt(x.av)}</b></div><div class="bartrack" style="margin-top:7px"><div class="barfill" style="width:${Math.max(0,x.av/max*100)}%"></div></div><div class="muted" style="font-size:11px;margin-top:4px">Раньше: ${fmt(x.bv)} · ${x.d>0?'+':''}${fmt(x.d)}</div></div>`).join(''):'<div class="empty">В этих месяцах пока нет расходов.</div>'}</div>`;}
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.view===id));if(id==='categoriesView')renderCategories();if(id==='historyView')renderHistory();if(id==='reportsView')renderReport();window.scrollTo({top:0,behavior:'smooth'});}
+function openModal(title,html){$('modalTitle').textContent=title;$('modalBody').innerHTML=html;$('modalBack').classList.add('show');}
+function closeModal(){ $('modalBack').classList.remove('show');editingId=null;}
+function openExpense(id=null,scope=null,cat=null,sub=null){if(!Array.isArray(state.categories?.tea)||!Array.isArray(state.categories?.life)){state.categories=JSON.parse(JSON.stringify(defaults));save();}for(const k of ['tea','life'])if(!Array.isArray(state.categories[k]))state.categories[k]=JSON.parse(JSON.stringify(defaults[k]));if(!Array.isArray(state.quick))state.quick=[];editingId=id;const old=id?state.expenses.find(e=>e.id===id):null;const sc=old?.scope||scope||'tea';const catName=old?.category||cat||state.categories[sc][0]?.name||'';const category= getCat(sc,catName);const subName=old?.sub||sub||category?.subs?.[0]||'';modalReturn=document.querySelector('.view.active')?.id||'homeView';const date=old?.date||new Date().toLocaleDateString('sv-SE');const amount=old?.amount??'';const note=old?.note||'';openModal(old?'Изменить расход':'Добавить расход',`
+<form id="expenseForm"><div class="formrow"><label>Раздел</label><div class="chips"><button type="button" class="chip ${sc==='tea'?'selected':''}" data-scope="tea">🐒 На чайную</button><button type="button" class="chip ${sc==='life'?'selected':''}" data-scope="life">🏠 На жизнь</button></div><input type="hidden" id="expScope" value="${sc}"></div>
+<div class="formgrid"><div class="formrow"><label for="expAmount">Сумма, ₽ *</label><input class="field" id="expAmount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0" value="${amount}" required></div><div class="formrow"><label for="expDate">Дата</label><input class="field" id="expDate" type="date" value="${date}" required></div></div>
+<div class="formrow"><label for="expCategory">Категория</label><select class="field" id="expCategory"></select></div><div class="formrow"><label for="expSub">Подпункт</label><select class="field" id="expSub"></select><div class="btnrow"><button type="button" class="smallbtn" id="newSubBtn">＋ Новый подпункт</button></div></div>
+<div class="formrow"><label for="expNote">Комментарий (необязательно)</label><input class="field" id="expNote" maxlength="120" placeholder="Например, название магазина" value="${esc(note)}"></div>
+<div class="formrow"><label>Частые покупки</label><div class="chips" id="quickChips"></div><div class="btnrow"><button type="button" class="smallbtn" id="saveQuickBtn">＋ Сохранить как быструю покупку</button></div></div>
+<div class="btnrow"><button class="primary wide" type="submit">${old?'Сохранить изменения':'Сохранить расход'}</button>${old?'<button type="button" class="secondary wide" id="deleteExpenseBtn" style="color:var(--red)">Удалить расход</button>':''}</div></form>`);
+const scInput=$('expScope'),catSel=$('expCategory'),subSel=$('expSub');
+function fillCats(keep){const previous=keep||catSel.value||catName;catSel.innerHTML=state.categories[scInput.value].map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');if(state.categories[scInput.value].some(c=>c.name===previous))catSel.value=previous;fillSubs(keep?null:subName);}
+function fillSubs(keep){const c=getCat(scInput.value,catSel.value);const vals=c?.subs||[];subSel.innerHTML='<option value="">— Без подпункта —</option>'+vals.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');if(keep!==null&&keep!==undefined&&vals.includes(keep))subSel.value=keep;renderQuick();}
+function renderQuick(){const matches=state.quick.filter(q=>q.scope===scInput.value&&q.category===catSel.value);$('quickChips').innerHTML=matches.length?matches.map((q,i)=>`<button type="button" class="chip quick" data-i="${state.quick.indexOf(q)}">${esc(q.name)} · ${fmt(q.amount)}</button>`).join(''):'<span class="muted" style="font-size:12px">Сохрани частую покупку — она появится здесь.</span>'; $('quickChips').querySelectorAll('.quick').forEach(b=>b.onclick=()=>{const q=state.quick[Number(b.dataset.i)];$('expAmount').value=q.amount;if(q.sub&&[...subSel.options].some(o=>o.value===q.sub))subSel.value=q.sub;if(q.note)$('expNote').value=q.note;});}
+$('modalBody').querySelectorAll('[data-scope]').forEach(b=>b.onclick=()=>{scInput.value=b.dataset.scope;$('modalBody').querySelectorAll('[data-scope]').forEach(x=>x.classList.toggle('selected',x===b));fillCats(null);});
+catSel.onchange=()=>fillSubs(null);fillCats(subName);
+$('newSubBtn').onclick=()=>{const name=prompt('Название нового подпункта:');if(!name?.trim())return;const c=getCat(scInput.value,catSel.value);if(!c)return;if(!c.subs.some(s=>s.toLowerCase()===name.trim().toLowerCase()))c.subs.push(name.trim());save();fillSubs(name.trim());render();};
+$('saveQuickBtn').onclick=()=>{const a=Number($('expAmount').value);if(!(a>0)){alert('Сначала введи сумму покупки.');return;}const name=prompt('Название быстрой покупки:',$('expNote').value.trim()||subSel.value||catSel.value);if(!name?.trim())return;state.quick=state.quick.filter(q=>!(q.scope===scInput.value&&q.category===catSel.value&&q.name===name.trim()));state.quick.push({scope:scInput.value,category:catSel.value,sub:subSel.value,amount:a,name:name.trim(),note:$('expNote').value.trim()});save();renderQuick();};
+$('expenseForm').onsubmit=e=>{e.preventDefault();const a=Number($('expAmount').value);if(!(a>0)){alert('Укажи сумму больше нуля.');return;}const obj={id:old?.id||String(Date.now())+Math.random().toString(16).slice(2,6),scope:scInput.value,category:catSel.value,sub:subSel.value,amount:a,date:$('expDate').value,note:$('expNote').value.trim()};if(old)state.expenses=state.expenses.map(x=>x.id===old.id?obj:x);else state.expenses.push(obj);save();closeModal();render();};
+if(old)$('deleteExpenseBtn').onclick=()=>{if(confirm('Удалить этот расход?')){state.expenses=state.expenses.filter(e=>e.id!==old.id);save();closeModal();render();}};
+$('expAmount').focus({preventScroll:true});}
+function addCategory(){const scope=categoryScope;const name=prompt(currentCategory?`Новый подпункт для «${currentCategory}»:`:`Название новой категории в разделе «${scopeName(scope)}»:`);if(!name?.trim())return;const clean=name.trim();if(currentCategory){const c=getCat(scope,currentCategory);if(!c)return;if(c.subs.some(x=>x.toLowerCase()===clean.toLowerCase())){alert('Такой подпункт уже есть.');return;}c.subs.push(clean);}else{if(state.categories[scope].some(c=>c.name.toLowerCase()===clean.toLowerCase())){alert('Такая категория уже есть.');return;}state.categories[scope].push({name:clean,subs:[]});}save();render();renderCategories();}
+function manageCategories(){const scope=categoryScope;const cats=state.categories[scope];openModal('Управление категориями',`<div class="formrow"><label>Раздел</label><div class="chips"><button class="chip ${scope==='tea'?'selected':''}" id="manageTea">🐒 На чайную</button><button class="chip ${scope==='life'?'selected':''}" id="manageLife">🏠 На жизнь</button></div></div><div class="recent" id="manageList"></div><div class="btnrow" style="margin-top:12px"><button class="primary wide" id="manageAddCat">＋ Добавить категорию</button></div>`);
+let current=scope;function draw(){const list=state.categories[current];$('manageList').innerHTML=list.map((c,i)=>`<div class="row" style="align-items:flex-start"><div class="rowicon">${iconFor(c.name)}</div><div class="rowmain"><div class="rowtitle">${esc(c.name)}</div><div class="rowsub">${c.subs.length?c.subs.map(esc).join(' · '):'Нет подпунктов'}</div><div class="btnrow" style="margin-top:8px"><button class="smallbtn" data-rename="${i}">Переименовать</button><button class="smallbtn" data-sub="${i}">＋ Подпункт</button><button class="smallbtn" data-editsubs="${i}">Подпункты</button><button class="smallbtn" data-del="${i}" style="color:var(--red)">Удалить</button></div></div></div>`).join('')||'<div class="empty">Категорий пока нет.</div>'; $('manageList').querySelectorAll('[data-rename]').forEach(b=>b.onclick=()=>{const c=list[+b.dataset.rename],n=prompt('Новое название категории:',c.name);if(!n?.trim())return;const oldName=c.name;c.name=n.trim();state.expenses.forEach(e=>{if(e.scope===current&&e.category===oldName)e.category=c.name;});save();draw();render();});$('manageList').querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{const c=list[+b.dataset.sub],n=prompt(`Новый подпункт для «${c.name}»:`);if(!n?.trim())return;if(!c.subs.some(s=>s.toLowerCase()===n.trim().toLowerCase()))c.subs.push(n.trim());save();draw();render();});$('manageList').querySelectorAll('[data-editsubs]').forEach(b=>b.onclick=()=>{const c=list[+b.dataset.editsubs];const n=prompt(`Подпункты «${c.name}» через запятую:`,c.subs.join(', '));if(n===null)return;const oldSubs=c.subs.slice(),newSubs=n.split(',').map(x=>x.trim()).filter(Boolean);c.subs=[...new Set(newSubs)];state.expenses.forEach(e=>{if(e.scope===current&&e.category===c.name&&e.sub&&oldSubs.includes(e.sub)&&!c.subs.includes(e.sub))e.sub='';});save();draw();render();});$('manageList').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const c=list[+b.dataset.del];if(!confirm(`Убрать категорию «${c.name}» из списка? Старые расходы сохранятся в истории.`))return;state.categories[current]=list.filter(x=>x!==c);save();draw();render();});}
+$('manageTea').onclick=()=>{current='tea';$('manageTea').classList.add('selected');$('manageLife').classList.remove('selected');draw();};$('manageLife').onclick=()=>{current='life';$('manageLife').classList.add('selected');$('manageTea').classList.remove('selected');draw();};$('manageAddCat').onclick=()=>{const n=prompt('Название новой категории:');if(!n?.trim())return;if(state.categories[current].some(c=>c.name.toLowerCase()===n.trim().toLowerCase())){alert('Такая категория уже есть.');return;}state.categories[current].push({name:n.trim(),subs:[]});save();draw();render();};draw();}
+function exportData(){const blob=new Blob([JSON.stringify({app:'Мои расходы',version:1,exportedAt:new Date().toISOString(),...state},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`moi-rashody-${monthKey(today)}.json`;a.click();URL.revokeObjectURL(url);}
+function importData(file){const reader=new FileReader();reader.onload=()=>{try{const x=JSON.parse(reader.result);if(!Array.isArray(x.expenses)||!x.categories?.tea||!x.categories?.life)throw Error('bad');if(!confirm(`Заменить текущие данные? В файле ${x.expenses.length} расходов.`))return;state={expenses:x.expenses,categories:x.categories,quick:Array.isArray(x.quick)?x.quick:[]};save();render();alert('Данные восстановлены.');}catch(e){alert('Не удалось прочитать файл. Выбери резервную копию, экспортированную из этого приложения.');}};reader.readAsText(file);}
+$('prevMonth').onclick=()=>{selectedMonth=shiftMonth(selectedMonth,-1);render();};$('nextMonth').onclick=()=>{selectedMonth=shiftMonth(selectedMonth,1);render();};
+$('teaTile').onclick=()=>{categoryScope='tea';currentCategory=null;showView('categoriesView');};$('lifeTile').onclick=()=>{categoryScope='life';currentCategory=null;showView('categoriesView');};
+$('addExpenseBtn').addEventListener('click',()=>{categoryScope='tea';currentCategory=null;showView('categoriesView');});$('historyAddBtn').addEventListener('click',()=>{try{openExpense();}catch(err){console.error(err);alert('Не удалось открыть форму расхода. Обнови страницу и попробуй ещё раз.');}});$('allHistoryBtn').onclick=()=>showView('historyView');$('compareShortcut').onclick=()=>{ $('reportMonth').value=selectedMonth;$('compareMonth').value=shiftMonth(selectedMonth,-1);showView('reportsView');renderReport();};
+$('scopeTea').onclick=()=>{categoryScope='tea';currentCategory=null;renderCategories();};$('scopeLife').onclick=()=>{categoryScope='life';currentCategory=null;renderCategories();};$('addCategoryBtn').onclick=addCategory;
+$('historySearch').oninput=renderHistory;$('historyScope').onchange=renderHistory;$('reportMonth').onchange=renderReport;$('compareMonth').onchange=renderReport;$('reportScope').onchange=renderReport;
+document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>showView(b.dataset.view));
+$('settingsBtn').onclick=()=>showView('settingsView');$('manageCatsBtn').onclick=()=>{categoryScope='tea';manageCategories();};
+$('exportBtn').onclick=exportData;$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=e=>{if(e.target.files[0])importData(e.target.files[0]);e.target.value='';};
+$('clearDataBtn').onclick=()=>{if(confirm('Точно удалить все расходы, категории и быстрые покупки? Сначала экспортируй резервную копию, если данные нужны.')){state={expenses:[],categories:JSON.parse(JSON.stringify(defaults)),quick:[]};save();render();alert('Данные приложения очищены.');}};
+$('closeModal').onclick=closeModal;$('modalBack').onclick=e=>{if(e.target===$('modalBack'))closeModal();};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+render();
+})();
+</script>
+</body>
+</html>
